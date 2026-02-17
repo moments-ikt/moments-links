@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moments</title>
+  <meta name="apple-itunes-app" content="app-id=6742704092">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #FFFFFF;
+      color: #30234B;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: #30234B;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .logo span {
+      color: white;
+      font-size: 36px;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #30234B;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.5;
+      max-width: 320px;
+    }
+    .open-btn {
+      display: inline-block;
+      background: #30234B;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 40px;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-bottom: 16px;
+      cursor: pointer;
+      border: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .open-btn:active { opacity: 0.9; }
+    .download-btn {
+      display: inline-block;
+      background: transparent;
+      color: #30234B;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 12px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 1.5px solid #E0E0E0;
+      margin-bottom: 12px;
+    }
+    .download-btn:active { opacity: 0.8; }
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    .linktree {
+      font-size: 13px;
+      color: #999;
+      margin-top: 24px;
+    }
+    .linktree a {
+      color: #7B61FF;
+      text-decoration: none;
+    }
+    .type-badge {
+      display: inline-block;
+      background: #F3F2F8;
+      color: #30234B;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo"><span>M</span></div>
+  <div class="type-badge" id="typeBadge"></div>
+  <h1 id="heading"></h1>
+  <p class="subtitle" id="subtitle"></p>
+  <div class="links">
+    <a class="open-btn" id="openBtn" href="#"></a>
+    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092"></a>
+  </div>
+  <div class="linktree" id="linktree"></div>
+
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      var match = path.match(/^\/(event|group|profile)\/([a-zA-Z0-9-]+)/);
+      var type = match ? match[1] : null;
+      var id = match ? match[2] : null;
+
+      var isEn = (navigator.language || '').toLowerCase().startsWith('en');
+
+      var strings = {
+        no: {
+          event: 'Aktivitet',
+          group: 'Gruppe',
+          profile: 'Profil',
+          heading: 'Se dette i Moments',
+          headingFallback: 'Moments',
+          subtitle: 'Trykk for å åpne i appen. Hvis du ikke har appen, last den ned fra App Store.',
+          subtitleFallback: 'Oppdag aktiviteter, bli med i grupper og møt nye folk.',
+          open: 'Åpne i appen',
+          download: 'Last ned fra App Store',
+          linktree: 'Finn oss på <a href="https://linktr.ee/Moments_App">Linktree</a>'
+        },
+        en: {
+          event: 'Event',
+          group: 'Group',
+          profile: 'Profile',
+          heading: 'View this in Moments',
+          headingFallback: 'Moments',
+          subtitle: 'Tap to open in the app. If you don\'t have it yet, download it from the App Store.',
+          subtitleFallback: 'Discover activities, join groups, and meet new people.',
+          open: 'Open in app',
+          download: 'Download from App Store',
+          linktree: 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>'
+        }
+      };
+
+      var s = isEn ? strings.en : strings.no;
+
+      var badge = document.getElementById('typeBadge');
+      var heading = document.getElementById('heading');
+      var subtitle = document.getElementById('subtitle');
+      var openBtn = document.getElementById('openBtn');
+      var downloadBtn = document.getElementById('downloadBtn');
+      var linktree = document.getElementById('linktree');
+
+      if (type) {
+        badge.textContent = s[type] || '';
+        heading.textContent = s.heading;
+        subtitle.textContent = s.subtitle;
+      } else {
+        badge.style.display = 'none';
+        heading.textContent = s.headingFallback;
+        subtitle.textContent = s.subtitleFallback;
+      }
+
+      openBtn.textContent = s.open;
+      downloadBtn.textContent = s.download;
+      linktree.innerHTML = s.linktree;
+
+      if (type && id) {
+        var appUrl = 'momentsapp://' + type + '/' + id;
+        openBtn.href = appUrl;
+      } else {
+        openBtn.href = 'https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092';
+      }
+
+      if (isEn) {
+        document.documentElement.lang = 'en';
+      }
+    })();
+  </script>
+</body>
+</html>

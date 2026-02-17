@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moments – Møt nye folk</title>
+  <meta name="apple-itunes-app" content="app-id=6742704092">
+  <meta name="description" content="Oppdag aktiviteter, bli med i grupper og møt nye folk med Moments.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #FFFFFF;
+      color: #30234B;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: #30234B;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .logo span {
+      color: white;
+      font-size: 36px;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #30234B;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.5;
+      max-width: 320px;
+    }
+    .download-btn {
+      display: inline-block;
+      background: #30234B;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 40px;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-bottom: 16px;
+    }
+    .download-btn:active { opacity: 0.9; }
+    .linktree {
+      font-size: 13px;
+      color: #999;
+      margin-top: 24px;
+    }
+    .linktree a {
+      color: #7B61FF;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo"><span>M</span></div>
+  <h1 id="heading"></h1>
+  <p class="subtitle" id="subtitle"></p>
+  <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092"></a>
+  <div class="linktree" id="linktree"></div>
+
+  <script>
+    (function() {
+      var isEn = (navigator.language || '').toLowerCase().startsWith('en');
+      if (isEn) {
+        document.documentElement.lang = 'en';
+        document.title = 'Moments – Meet new people';
+        document.getElementById('heading').textContent = 'Moments';
+        document.getElementById('subtitle').textContent = 'Discover activities, join groups, and meet new people.';
+        document.getElementById('downloadBtn').textContent = 'Download from App Store';
+        document.getElementById('linktree').innerHTML = 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>';
+      } else {
+        document.getElementById('heading').textContent = 'Moments';
+        document.getElementById('subtitle').textContent = 'Oppdag aktiviteter, bli med i grupper og møt nye folk.';
+        document.getElementById('downloadBtn').textContent = 'Last ned fra App Store';
+        document.getElementById('linktree').innerHTML = 'Finn oss på <a href="https://linktr.ee/Moments_App">Linktree</a>';
+      }
+    })();
+  </script>
+</body>
+</html>

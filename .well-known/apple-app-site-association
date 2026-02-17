@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "D5QQ43BW4G.no.momentsapp",
+        "paths": ["/event/*", "/group/*", "/profile/*"]
+      }
+    ]
+  }
+}
