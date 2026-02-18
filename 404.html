@@ -339,86 +339,87 @@
       }
 
       // --- Fetch event/group data from Supabase ---
-      if (type && id && (type === 'event' || type === 'group')) {
-        var SUPABASE_URL = 'https://ynuvtpkdxvzlmfqbuvvn.supabase.co';
-        var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InludXZ0cGtkeHZ6bG1mcWJ1dnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIyNDYwNzQsImV4cCI6MjAyNzgyMjA3NH0.mua9EwOROb26EnU7HOTl8thxIzBJ_ox52jzVVDCYfjg';
-        var headers = { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY };
-        var logoContainer = document.getElementById('logoContainer');
+      // Page already shows default content (M logo, heading, buttons).
+      // This block enhances with real data if available.
+      var logoContainer = document.getElementById('logoContainer');
+      try {
+        if (type && id && (type === 'event' || type === 'group') && typeof fetch === 'function') {
+          var SUPABASE_URL = 'https://ynuvtpkdxvzlmfqbuvvn.supabase.co';
+          var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InludXZ0cGtkeHZ6bG1mcWJ1dnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIyNDYwNzQsImV4cCI6MjAyNzgyMjA3NH0.mua9EwOROb26EnU7HOTl8thxIzBJ_ox52jzVVDCYfjg';
+          var headers = { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY };
 
-        // Show spinner while loading
-        logoContainer.innerHTML = '<div class="spinner"></div>';
+          var fetchUrl = type === 'event'
+            ? SUPABASE_URL + '/rest/v1/event?id=eq.' + id + '&select=title,description'
+            : SUPABASE_URL + '/rest/v1/group?id=eq.' + id + '&select=title,description,header_image_path';
 
-        var fetchUrl = type === 'event'
-          ? SUPABASE_URL + '/rest/v1/event?id=eq.' + id + '&select=title,description'
-          : SUPABASE_URL + '/rest/v1/group?id=eq.' + id + '&select=title,description,header_image_path';
+          console.log('[Moments] Fetching:', fetchUrl);
+          fetch(fetchUrl, { headers: headers })
+            .then(function(r) {
+              console.log('[Moments] Response status:', r.status);
+              if (!r.ok) { throw new Error('HTTP ' + r.status); }
+              return r.json();
+            })
+            .then(function(rows) {
+              console.log('[Moments] Data:', rows);
+              if (!rows || !rows.length) { return; }
+              var item = rows[0];
 
-        console.log('[Moments] Fetching:', fetchUrl);
-        fetch(fetchUrl, { headers: headers })
-          .then(function(r) {
-            console.log('[Moments] Response status:', r.status);
-            return r.json();
-          })
-          .then(function(rows) {
-            console.log('[Moments] Data:', rows);
-            if (!rows || !rows.length) throw new Error('not found');
-            var item = rows[0];
+              // Update title
+              if (item.title) {
+                heading.textContent = item.title;
+                document.title = item.title + ' \u2013 Moments';
+                var ogT = document.querySelector('meta[property="og:title"]');
+                if (ogT) { ogT.content = item.title + ' \u2013 Moments'; }
+              }
 
-            // Update title
-            if (item.title) {
-              heading.textContent = item.title;
-              document.title = item.title + ' \u2013 Moments';
-              var ogT = document.querySelector('meta[property="og:title"]');
-              if (ogT) ogT.content = item.title + ' \u2013 Moments';
-            }
+              // Update description
+              if (item.description) {
+                var desc = item.description.length > 150
+                  ? item.description.slice(0, 150) + '\u2026'
+                  : item.description;
+                subtitle.textContent = desc;
+                var ogD = document.querySelector('meta[property="og:description"]');
+                if (ogD) { ogD.content = desc; }
+              }
 
-            // Update description
-            if (item.description) {
-              var desc = item.description.length > 150
-                ? item.description.slice(0, 150) + '\u2026'
-                : item.description;
-              subtitle.textContent = desc;
-              var ogD = document.querySelector('meta[property="og:description"]');
-              if (ogD) ogD.content = desc;
-            }
+              // Resolve image
+              if (type === 'group' && item.header_image_path) {
+                showPreviewImage(SUPABASE_URL, item.header_image_path);
+              } else if (type === 'event') {
+                fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: headers })
+                  .then(function(r) { return r.json(); })
+                  .then(function(imgs) {
+                    console.log('[Moments] Event images:', imgs);
+                    if (imgs && imgs.length && imgs[0] && imgs[0].image_path) {
+                      showPreviewImage(SUPABASE_URL, imgs[0].image_path);
+                    }
+                  })
+                  .catch(function(err) { console.error('[Moments] Image fetch failed:', err); });
+              }
+            })
+            .catch(function(err) {
+              console.error('[Moments] Fetch failed:', err);
+            });
+        }
+      } catch (e) {
+        console.error('[Moments] Script error:', e);
+      }
 
-            // Resolve image
-            var imagePath = null;
-            if (type === 'group' && item.header_image_path) {
-              imagePath = item.header_image_path;
-              showImage(imagePath);
-            } else if (type === 'event') {
-              // Fetch first event image
-              fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: headers })
-                .then(function(r) { return r.json(); })
-                .then(function(imgs) {
-                  console.log('[Moments] Event images:', imgs);
-                  if (imgs && imgs.length && imgs[0].image_path) {
-                    showImage(imgs[0].image_path);
-                  } else {
-                    restoreLogo();
-                  }
-                })
-                .catch(function(err) { console.error('[Moments] Image fetch failed:', err); restoreLogo(); });
-            } else {
-              restoreLogo();
-            }
-          })
-          .catch(function(err) {
-            console.error('[Moments] Fetch failed:', err);
-            restoreLogo();
-          });
-
-        function showImage(imgPath) {
-          var img = new Image();
+      function showPreviewImage(baseUrl, imgPath) {
+        try {
+          var img = document.createElement('img');
           img.className = 'preview-img';
           img.alt = '';
-          img.src = SUPABASE_URL + '/storage/v1/object/public/event_images/' + imgPath;
-          img.onload = function() { logoContainer.innerHTML = ''; logoContainer.appendChild(img); };
-          img.onerror = function() { console.error('[Moments] Image load failed:', img.src); restoreLogo(); };
-        }
-
-        function restoreLogo() {
-          logoContainer.innerHTML = '<div class="logo"><span>M</span></div>';
+          img.src = baseUrl + '/storage/v1/object/public/event_images/' + imgPath;
+          img.onload = function() {
+            logoContainer.innerHTML = '';
+            logoContainer.appendChild(img);
+          };
+          img.onerror = function() {
+            console.error('[Moments] Image load failed:', img.src);
+          };
+        } catch (e) {
+          console.error('[Moments] showPreviewImage error:', e);
         }
       }
 
@@ -428,7 +429,6 @@
         e.preventDefault();
         window.location.href = appUrl;
 
-        // Listen for visibility change - if app opens, page becomes hidden
         var redirectTimer = setTimeout(function() {
           if (!document.hidden) {
             window.location.href = APP_STORE;
@@ -436,11 +436,13 @@
         }, 2500);
 
         // Cancel redirect if app opened successfully
-        document.addEventListener('visibilitychange', function() {
+        var onVisChange = function() {
           if (document.hidden) {
             clearTimeout(redirectTimer);
+            document.removeEventListener('visibilitychange', onVisChange);
           }
-        }, { once: true });
+        };
+        document.addEventListener('visibilitychange', onVisChange, false);
       });
 
       // --- Helpers ---
