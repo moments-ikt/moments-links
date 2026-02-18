@@ -164,6 +164,26 @@
       border-radius: 20px;
       margin-bottom: 16px;
     }
+    .preview-img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      object-fit: cover;
+      aspect-ratio: 16/9;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #E0E0E0;
+      border-top-color: #30234B;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-bottom: 24px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -174,7 +194,7 @@
   </div>
   <div class="toast" id="toast"></div>
 
-  <div class="logo"><span>M</span></div>
+  <div id="logoContainer"><div class="logo"><span>M</span></div></div>
   <div class="type-badge" id="typeBadge"></div>
   <h1 id="heading"></h1>
   <p class="subtitle" id="subtitle"></p>
@@ -318,6 +338,84 @@
       // --- Clipboard deep link (deferred deep linking) ---
       if (!isIAB) {
         copyToClipboard(fullUrl);
+      }
+
+      // --- Fetch event/group data from Supabase ---
+      if (type && id && (type === 'event' || type === 'group')) {
+        var SUPABASE_URL = 'https://ynuvtpkdxvzlmfqbuvvn.supabase.co';
+        var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InludXZ0cGtkeHZ6bG1mcWJ1dnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwMzIwNjMsImV4cCI6MjA0MDYwODA2M30.mI9MN5MbTEACmEFmBYpXmPdMdMGnQNLKnb1DebHIGJk';
+        var headers = { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY };
+        var logoContainer = document.getElementById('logoContainer');
+
+        // Show spinner while loading
+        logoContainer.innerHTML = '<div class="spinner"></div>';
+
+        var fetchUrl = type === 'event'
+          ? SUPABASE_URL + '/rest/v1/event?id=eq.' + id + '&select=title,description'
+          : SUPABASE_URL + '/rest/v1/group?id=eq.' + id + '&select=title,description,header_image_path';
+
+        fetch(fetchUrl, { headers: headers })
+          .then(function(r) { return r.json(); })
+          .then(function(rows) {
+            if (!rows || !rows.length) throw new Error('not found');
+            var item = rows[0];
+
+            // Update title
+            if (item.title) {
+              heading.textContent = item.title;
+              document.title = item.title + ' \u2013 Moments';
+              var ogT = document.querySelector('meta[property="og:title"]');
+              if (ogT) ogT.content = item.title + ' \u2013 Moments';
+            }
+
+            // Update description
+            if (item.description) {
+              var desc = item.description.length > 150
+                ? item.description.slice(0, 150) + '\u2026'
+                : item.description;
+              subtitle.textContent = desc;
+              var ogD = document.querySelector('meta[property="og:description"]');
+              if (ogD) ogD.content = desc;
+            }
+
+            // Resolve image
+            var imagePath = null;
+            if (type === 'group' && item.header_image_path) {
+              imagePath = item.header_image_path;
+              showImage(imagePath);
+            } else if (type === 'event') {
+              // Fetch first event image
+              fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: headers })
+                .then(function(r) { return r.json(); })
+                .then(function(imgs) {
+                  if (imgs && imgs.length && imgs[0].image_path) {
+                    showImage(imgs[0].image_path);
+                  } else {
+                    restoreLogo();
+                  }
+                })
+                .catch(function() { restoreLogo(); });
+            } else {
+              restoreLogo();
+            }
+          })
+          .catch(function() {
+            // Fetch failed — restore fallback
+            restoreLogo();
+          });
+
+        function showImage(imgPath) {
+          var img = new Image();
+          img.className = 'preview-img';
+          img.alt = '';
+          img.src = SUPABASE_URL + '/storage/v1/object/public/event_images/' + imgPath;
+          img.onload = function() { logoContainer.innerHTML = ''; logoContainer.appendChild(img); };
+          img.onerror = function() { restoreLogo(); };
+        }
+
+        function restoreLogo() {
+          logoContainer.innerHTML = '<div class="logo"><span>M</span></div>';
+        }
       }
 
       // --- Open button click handler with visibility check ---
