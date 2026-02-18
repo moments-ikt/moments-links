@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light only">
   <title>Moments</title>
   <meta name="apple-itunes-app" content="app-id=6670760989" id="smartBanner">
   <meta property="og:title" content="Moments – Møt nye folk">
@@ -183,27 +185,27 @@
     }
   </style>
 </head>
-<body>
+<body style="color:#30234B;background-color:#FFFFFF;">
 
   <!-- IAB banner (hidden by default, shown by JS if in-app browser) -->
   <div class="iab-banner" id="iabBanner">
-    <div class="iab-title" id="iabTitle"></div>
-    <div class="iab-steps" id="iabSteps"></div>
-    <button class="iab-copy-btn" id="iabCopyBtn">Kopier lenke</button>
+    <div class="iab-title" id="iabTitle" style="color:#E65100;"></div>
+    <div class="iab-steps" id="iabSteps" style="color:#5D4037;"></div>
+    <button class="iab-copy-btn" id="iabCopyBtn" style="color:#FFFFFF;background-color:#30234B;">Kopier lenke</button>
   </div>
   <div class="toast" id="toast"></div>
 
   <!-- All default content is visible without JavaScript -->
-  <div id="logoContainer"><div class="logo"><span>M</span></div></div>
-  <div class="type-badge" id="typeBadge" style="display:none;"></div>
-  <h1 id="heading">Se dette i Moments</h1>
-  <p class="subtitle" id="subtitle">Trykk for å åpne i appen. Hvis du ikke har appen, last den ned fra App Store.</p>
+  <div id="logoContainer"><div class="logo" style="background-color:#30234B;"><span style="color:#FFFFFF;">M</span></div></div>
+  <div class="type-badge" id="typeBadge" style="display:none;color:#30234B;background-color:#F3F2F8;"></div>
+  <h1 id="heading" style="color:#30234B;">Se dette i Moments</h1>
+  <p class="subtitle" id="subtitle" style="color:#666666;">Trykk for å åpne i appen. Hvis du ikke har appen, last den ned fra App Store.</p>
   <div class="links">
-    <a class="open-btn" id="openBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb">Åpne i appen</a>
-    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb">Last ned fra App Store</a>
-    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp">Last ned fra Google Play</a>
+    <a class="open-btn" id="openBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb" style="color:#FFFFFF;background-color:#30234B;">Åpne i appen</a>
+    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb" style="color:#30234B;background-color:transparent;border-color:#E0E0E0;">Last ned fra App Store</a>
+    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp" style="color:#30234B;background-color:transparent;border-color:#E0E0E0;">Last ned fra Google Play</a>
   </div>
-  <div class="linktree" id="linktree">Finn oss på <a href="https://linktr.ee/Moments_App">Linktree</a></div>
+  <div class="linktree" id="linktree" style="color:#999999;">Finn oss på <a href="https://linktr.ee/Moments_App" style="color:#7B61FF;">Linktree</a></div>
 
   <!-- All JavaScript at end of body, fully ES5, wrapped in try/catch -->
   <script>
