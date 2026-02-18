@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Moments – Møt nye folk</title>
-  <meta name="apple-itunes-app" content="app-id=6742704092">
+  <meta name="apple-itunes-app" content="app-id=6670760989">
   <meta name="description" content="Oppdag aktiviteter, bli med i grupper og møt nye folk med Moments.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,7 +75,10 @@
   <div class="logo"><span>M</span></div>
   <h1 id="heading"></h1>
   <p class="subtitle" id="subtitle"></p>
-  <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092"></a>
+  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb"></a>
+    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp" style="background:transparent;color:#30234B;border:1.5px solid #E0E0E0;font-size:15px;font-weight:500;padding:12px 32px;"></a>
+  </div>
   <div class="linktree" id="linktree"></div>
 
   <script>
@@ -87,11 +90,13 @@
         document.getElementById('heading').textContent = 'Moments';
         document.getElementById('subtitle').textContent = 'Discover activities, join groups, and meet new people.';
         document.getElementById('downloadBtn').textContent = 'Download from App Store';
+        document.getElementById('googlePlayBtn').textContent = 'Download from Google Play';
         document.getElementById('linktree').innerHTML = 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>';
       } else {
         document.getElementById('heading').textContent = 'Moments';
         document.getElementById('subtitle').textContent = 'Oppdag aktiviteter, bli med i grupper og møt nye folk.';
         document.getElementById('downloadBtn').textContent = 'Last ned fra App Store';
+        document.getElementById('googlePlayBtn').textContent = 'Last ned fra Google Play';
         document.getElementById('linktree').innerHTML = 'Finn oss på <a href="https://linktr.ee/Moments_App">Linktree</a>';
       }
     })();

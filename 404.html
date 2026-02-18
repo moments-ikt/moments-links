@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Moments</title>
-  <meta name="apple-itunes-app" content="app-id=6742704092" id="smartBanner">
+  <meta name="apple-itunes-app" content="app-id=6670760989" id="smartBanner">
   <meta property="og:title" content="Moments – Møt nye folk">
   <meta property="og:description" content="Oppdag aktiviteter, bli med i grupper og møt nye folk med Moments.">
   <meta property="og:url" content="">
@@ -180,13 +180,14 @@
   <p class="subtitle" id="subtitle"></p>
   <div class="links">
     <a class="open-btn" id="openBtn" href="#"></a>
-    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092"></a>
+    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb"></a>
+    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp"></a>
   </div>
   <div class="linktree" id="linktree"></div>
 
   <script>
     (function() {
-      var APP_STORE = 'https://apps.apple.com/app/moments-m%C3%B8t-nye-folk/id6742704092';
+      var APP_STORE = 'https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb';
       var path = window.location.pathname;
       var fullUrl = window.location.href;
       var match = path.match(/^\/(event|group|profile)\/([a-zA-Z0-9-]+)/);
@@ -212,6 +213,7 @@
           subtitleFallback: 'Oppdag aktiviteter, bli med i grupper og m\u00f8t nye folk.',
           open: '\u00c5pne i appen',
           download: 'Last ned fra App Store',
+          googlePlay: 'Last ned fra Google Play',
           linktree: 'Finn oss p\u00e5 <a href="https://linktr.ee/Moments_App">Linktree</a>',
           iabTitle: '\u26a0\ufe0f Du er i en innebygd nettleser',
           iabSteps: '1. Trykk \u22ef \u00f8verst til h\u00f8yre\n2. Velg \u00abÅpne i Safari\u00bb',
@@ -230,6 +232,7 @@
           subtitleFallback: 'Discover activities, join groups, and meet new people.',
           open: 'Open in app',
           download: 'Download from App Store',
+          googlePlay: 'Download from Google Play',
           linktree: 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>',
           iabTitle: '\u26a0\ufe0f You are in an in-app browser',
           iabSteps: '1. Tap \u22ef in the top right\n2. Select "Open in Safari"',
@@ -253,7 +256,7 @@
       // --- Smart App Banner with deep link ---
       var smartBanner = document.getElementById('smartBanner');
       if (smartBanner && appUrl) {
-        smartBanner.content = 'app-id=6742704092, app-argument=' + appUrl;
+        smartBanner.content = 'app-id=6670760989, app-argument=' + appUrl;
       }
 
       // --- Language ---
@@ -267,6 +270,7 @@
       var subtitle = document.getElementById('subtitle');
       var openBtn = document.getElementById('openBtn');
       var downloadBtn = document.getElementById('downloadBtn');
+      var googlePlayBtn = document.getElementById('googlePlayBtn');
       var linktree = document.getElementById('linktree');
 
       if (type) {
@@ -281,6 +285,7 @@
 
       openBtn.textContent = s.open;
       downloadBtn.textContent = s.download;
+      googlePlayBtn.textContent = s.googlePlay;
       linktree.innerHTML = s.linktree;
 
       if (appUrl) {
