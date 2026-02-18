@@ -308,9 +308,7 @@
       googlePlayBtn.textContent = s.googlePlay;
       linktree.innerHTML = s.linktree;
 
-      if (appUrl) {
-        openBtn.href = appUrl;
-      } else {
+      if (!appUrl) {
         openBtn.href = APP_STORE;
       }
 
@@ -428,14 +426,21 @@
       openBtn.addEventListener('click', function(e) {
         if (!appUrl) return;
         e.preventDefault();
-        var hiddenBefore = document.hidden;
         window.location.href = appUrl;
 
-        setTimeout(function() {
-          if (!document.hidden && !hiddenBefore) {
+        // Listen for visibility change - if app opens, page becomes hidden
+        var redirectTimer = setTimeout(function() {
+          if (!document.hidden) {
             window.location.href = APP_STORE;
           }
-        }, 1500);
+        }, 2500);
+
+        // Cancel redirect if app opened successfully
+        document.addEventListener('visibilitychange', function() {
+          if (document.hidden) {
+            clearTimeout(redirectTimer);
+          }
+        }, { once: true });
       });
 
       // --- Helpers ---
