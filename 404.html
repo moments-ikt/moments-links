@@ -354,9 +354,14 @@
           ? SUPABASE_URL + '/rest/v1/event?id=eq.' + id + '&select=title,description'
           : SUPABASE_URL + '/rest/v1/group?id=eq.' + id + '&select=title,description,header_image_path';
 
+        console.log('[Moments] Fetching:', fetchUrl);
         fetch(fetchUrl, { headers: headers })
-          .then(function(r) { return r.json(); })
+          .then(function(r) {
+            console.log('[Moments] Response status:', r.status);
+            return r.json();
+          })
           .then(function(rows) {
+            console.log('[Moments] Data:', rows);
             if (!rows || !rows.length) throw new Error('not found');
             var item = rows[0];
 
@@ -388,19 +393,20 @@
               fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: headers })
                 .then(function(r) { return r.json(); })
                 .then(function(imgs) {
+                  console.log('[Moments] Event images:', imgs);
                   if (imgs && imgs.length && imgs[0].image_path) {
                     showImage(imgs[0].image_path);
                   } else {
                     restoreLogo();
                   }
                 })
-                .catch(function() { restoreLogo(); });
+                .catch(function(err) { console.error('[Moments] Image fetch failed:', err); restoreLogo(); });
             } else {
               restoreLogo();
             }
           })
-          .catch(function() {
-            // Fetch failed — restore fallback
+          .catch(function(err) {
+            console.error('[Moments] Fetch failed:', err);
             restoreLogo();
           });
 
@@ -410,7 +416,7 @@
           img.alt = '';
           img.src = SUPABASE_URL + '/storage/v1/object/public/event_images/' + imgPath;
           img.onload = function() { logoContainer.innerHTML = ''; logoContainer.appendChild(img); };
-          img.onerror = function() { restoreLogo(); };
+          img.onerror = function() { console.error('[Moments] Image load failed:', img.src); restoreLogo(); };
         }
 
         function restoreLogo() {
