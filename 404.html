@@ -16,9 +16,13 @@
       background: #FFFFFF;
       color: #30234B;
       min-height: 100vh;
+      display: -webkit-flex;
       display: flex;
+      -webkit-flex-direction: column;
       flex-direction: column;
+      -webkit-align-items: center;
       align-items: center;
+      -webkit-justify-content: center;
       justify-content: center;
       padding: 24px;
       text-align: center;
@@ -66,6 +70,7 @@
       position: fixed;
       bottom: 40px;
       left: 50%;
+      -webkit-transform: translateX(-50%);
       transform: translateX(-50%);
       background: #30234B;
       color: white;
@@ -78,18 +83,21 @@
     }
     .toast.show {
       display: block;
+      -webkit-animation: fadeout 0.5s ease 2s forwards;
       animation: fadeout 0.5s ease 2s forwards;
     }
-    @keyframes fadeout {
-      to { opacity: 0; }
-    }
+    @-webkit-keyframes fadeout { to { opacity: 0; } }
+    @keyframes fadeout { to { opacity: 0; } }
     .logo {
       width: 80px;
       height: 80px;
       background: #30234B;
       border-radius: 20px;
+      display: -webkit-flex;
       display: flex;
+      -webkit-align-items: center;
       align-items: center;
+      -webkit-justify-content: center;
       justify-content: center;
       margin-bottom: 24px;
     }
@@ -140,9 +148,12 @@
     }
     .download-btn:active { opacity: 0.8; }
     .links {
+      display: -webkit-flex;
       display: flex;
+      -webkit-flex-direction: column;
       flex-direction: column;
       gap: 10px;
+      -webkit-align-items: center;
       align-items: center;
     }
     .linktree {
@@ -169,43 +180,34 @@
       max-width: 280px;
       border-radius: 16px;
       margin-bottom: 24px;
-      object-fit: cover;
-      aspect-ratio: 16/9;
-    }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid #E0E0E0;
-      border-top-color: #30234B;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-bottom: 24px;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+
+  <!-- IAB banner (hidden by default, shown by JS if in-app browser) -->
   <div class="iab-banner" id="iabBanner">
     <div class="iab-title" id="iabTitle"></div>
     <div class="iab-steps" id="iabSteps"></div>
-    <button class="iab-copy-btn" id="iabCopyBtn"></button>
+    <button class="iab-copy-btn" id="iabCopyBtn">Kopier lenke</button>
   </div>
   <div class="toast" id="toast"></div>
 
+  <!-- All default content is visible without JavaScript -->
   <div id="logoContainer"><div class="logo"><span>M</span></div></div>
-  <div class="type-badge" id="typeBadge"></div>
-  <h1 id="heading"></h1>
-  <p class="subtitle" id="subtitle"></p>
+  <div class="type-badge" id="typeBadge" style="display:none;"></div>
+  <h1 id="heading">Se dette i Moments</h1>
+  <p class="subtitle" id="subtitle">Trykk for å åpne i appen. Hvis du ikke har appen, last den ned fra App Store.</p>
   <div class="links">
-    <a class="open-btn" id="openBtn" href="#"></a>
-    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb"></a>
-    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp"></a>
+    <a class="open-btn" id="openBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb">Åpne i appen</a>
+    <a class="download-btn" id="downloadBtn" href="https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb">Last ned fra App Store</a>
+    <a class="download-btn" id="googlePlayBtn" href="https://play.google.com/store/apps/details?id=no.momentsapp">Last ned fra Google Play</a>
   </div>
-  <div class="linktree" id="linktree"></div>
+  <div class="linktree" id="linktree">Finn oss på <a href="https://linktr.ee/Moments_App">Linktree</a></div>
 
+  <!-- All JavaScript at end of body, fully ES5, wrapped in try/catch -->
   <script>
+    try {
     (function() {
       var APP_STORE = 'https://apps.apple.com/no/app/moments-aktiviteter/id6670760989?l=nb';
       var path = window.location.pathname;
@@ -215,76 +217,13 @@
       var id = match ? match[2] : null;
       var appUrl = (type && id) ? 'momentsapp://' + type + '/' + id : null;
 
-      var isEn = (navigator.language || '').toLowerCase().startsWith('en');
+      var isEn = (navigator.language || '').toLowerCase().indexOf('en') === 0;
 
       // --- In-app browser detection ---
       var ua = navigator.userAgent || '';
       var isIAB = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Musical\.ly|BytedanceWebview|Snapchat|Twitter|LinkedInApp/i.test(ua);
 
-      // --- Strings ---
-      var strings = {
-        no: {
-          event: 'Aktivitet',
-          group: 'Gruppe',
-          profile: 'Profil',
-          heading: 'Se dette i Moments',
-          headingFallback: 'Moments',
-          subtitle: 'Trykk for \u00e5 \u00e5pne i appen. Hvis du ikke har appen, last den ned fra App Store.',
-          subtitleFallback: 'Oppdag aktiviteter, bli med i grupper og m\u00f8t nye folk.',
-          open: '\u00c5pne i appen',
-          download: 'Last ned fra App Store',
-          googlePlay: 'Last ned fra Google Play',
-          linktree: 'Finn oss p\u00e5 <a href="https://linktr.ee/Moments_App">Linktree</a>',
-          iabTitle: '\u26a0\ufe0f Du er i en innebygd nettleser',
-          iabSteps: '1. Trykk \u22ef \u00f8verst til h\u00f8yre\n2. Velg \u00abÅpne i Safari\u00bb',
-          iabCopy: 'Kopier lenke',
-          iabToast: '\u2713 Lenke kopiert! Lim inn i Safari.',
-          ogTitle: 'Moments \u2013 M\u00f8t nye folk',
-          ogDesc: 'Oppdag aktiviteter, bli med i grupper og m\u00f8t nye folk med Moments.'
-        },
-        en: {
-          event: 'Event',
-          group: 'Group',
-          profile: 'Profile',
-          heading: 'View this in Moments',
-          headingFallback: 'Moments',
-          subtitle: 'Tap to open in the app. If you don\'t have it yet, download it from the App Store.',
-          subtitleFallback: 'Discover activities, join groups, and meet new people.',
-          open: 'Open in app',
-          download: 'Download from App Store',
-          googlePlay: 'Download from Google Play',
-          linktree: 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>',
-          iabTitle: '\u26a0\ufe0f You are in an in-app browser',
-          iabSteps: '1. Tap \u22ef in the top right\n2. Select "Open in Safari"',
-          iabCopy: 'Copy link',
-          iabToast: '\u2713 Link copied! Paste in Safari.',
-          ogTitle: 'Moments \u2013 Meet new people',
-          ogDesc: 'Discover activities, join groups, and meet new people with Moments.'
-        }
-      };
-
-      var s = isEn ? strings.en : strings.no;
-
-      // --- OG tags ---
-      var ogTitleTag = document.querySelector('meta[property="og:title"]');
-      var ogDescTag = document.querySelector('meta[property="og:description"]');
-      var ogUrlTag = document.querySelector('meta[property="og:url"]');
-      if (ogTitleTag) ogTitleTag.content = type ? s[type] + ' \u2013 Moments' : s.ogTitle;
-      if (ogDescTag) ogDescTag.content = s.ogDesc;
-      if (ogUrlTag) ogUrlTag.content = fullUrl;
-
-      // --- Smart App Banner with deep link ---
-      var smartBanner = document.getElementById('smartBanner');
-      if (smartBanner && appUrl) {
-        smartBanner.content = 'app-id=6670760989, app-argument=' + appUrl;
-      }
-
-      // --- Language ---
-      if (isEn) {
-        document.documentElement.lang = 'en';
-      }
-
-      // --- Page content ---
+      // --- Get DOM elements ---
       var badge = document.getElementById('typeBadge');
       var heading = document.getElementById('heading');
       var subtitle = document.getElementById('subtitle');
@@ -292,24 +231,48 @@
       var downloadBtn = document.getElementById('downloadBtn');
       var googlePlayBtn = document.getElementById('googlePlayBtn');
       var linktree = document.getElementById('linktree');
+      var logoContainer = document.getElementById('logoContainer');
 
-      if (type) {
-        badge.textContent = s[type] || '';
-        heading.textContent = s.heading;
-        subtitle.textContent = s.subtitle;
-      } else {
-        badge.style.display = 'none';
-        heading.textContent = s.headingFallback;
-        subtitle.textContent = s.subtitleFallback;
+      // --- English translations (Norwegian is already in the HTML) ---
+      if (isEn) {
+        document.documentElement.lang = 'en';
+        if (heading) { heading.textContent = type ? 'View this in Moments' : 'Moments'; }
+        if (subtitle) { subtitle.textContent = type ? 'Tap to open in the app. If you don\'t have it yet, download it from the App Store.' : 'Discover activities, join groups, and meet new people.'; }
+        if (openBtn) { openBtn.textContent = 'Open in app'; }
+        if (downloadBtn) { downloadBtn.textContent = 'Download from App Store'; }
+        if (googlePlayBtn) { googlePlayBtn.textContent = 'Download from Google Play'; }
+        if (linktree) { linktree.innerHTML = 'Find us on <a href="https://linktr.ee/Moments_App">Linktree</a>'; }
       }
 
-      openBtn.textContent = s.open;
-      downloadBtn.textContent = s.download;
-      googlePlayBtn.textContent = s.googlePlay;
-      linktree.innerHTML = s.linktree;
+      // --- Type badge ---
+      if (type && badge) {
+        var typeLabels = isEn
+          ? { event: 'Event', group: 'Group', profile: 'Profile' }
+          : { event: 'Aktivitet', group: 'Gruppe', profile: 'Profil' };
+        badge.textContent = typeLabels[type] || '';
+        badge.style.display = 'inline-block';
+      }
 
-      if (!appUrl) {
-        openBtn.href = APP_STORE;
+      // --- Fallback heading if no type ---
+      if (!type) {
+        if (heading) { heading.textContent = isEn ? 'Moments' : 'Moments'; }
+        if (subtitle) { subtitle.textContent = isEn ? 'Discover activities, join groups, and meet new people.' : 'Oppdag aktiviteter, bli med i grupper og m\u00f8t nye folk.'; }
+      }
+
+      // --- OG tags ---
+      var ogTitleTag = document.querySelector('meta[property="og:title"]');
+      var ogDescTag = document.querySelector('meta[property="og:description"]');
+      var ogUrlTag = document.querySelector('meta[property="og:url"]');
+      var ogTitle = isEn ? 'Moments \u2013 Meet new people' : 'Moments \u2013 M\u00f8t nye folk';
+      var ogDesc = isEn ? 'Discover activities, join groups, and meet new people with Moments.' : 'Oppdag aktiviteter, bli med i grupper og m\u00f8t nye folk med Moments.';
+      if (ogTitleTag) { ogTitleTag.setAttribute('content', type ? ((isEn ? (type.charAt(0).toUpperCase() + type.slice(1)) : (typeLabels ? typeLabels[type] : type)) + ' \u2013 Moments') : ogTitle); }
+      if (ogDescTag) { ogDescTag.setAttribute('content', ogDesc); }
+      if (ogUrlTag) { ogUrlTag.setAttribute('content', fullUrl); }
+
+      // --- Smart App Banner with deep link ---
+      var smartBanner = document.getElementById('smartBanner');
+      if (smartBanner && appUrl) {
+        smartBanner.setAttribute('content', 'app-id=6670760989, app-argument=' + appUrl);
       }
 
       // --- In-app browser banner ---
@@ -319,18 +282,19 @@
         var iabSteps = document.getElementById('iabSteps');
         var iabCopyBtn = document.getElementById('iabCopyBtn');
 
-        iabTitle.textContent = s.iabTitle;
-        iabSteps.textContent = s.iabSteps;
-        iabCopyBtn.textContent = s.iabCopy;
-        iabBanner.classList.add('show');
+        if (iabTitle) { iabTitle.textContent = isEn ? '\u26a0\ufe0f You are in an in-app browser' : '\u26a0\ufe0f Du er i en innebygd nettleser'; }
+        if (iabSteps) { iabSteps.textContent = isEn ? '1. Tap \u22ef in the top right\n2. Select "Open in Safari"' : '1. Trykk \u22ef \u00f8verst til h\u00f8yre\n2. Velg \u00abÅpne i Safari\u00bb'; }
+        if (iabCopyBtn) { iabCopyBtn.textContent = isEn ? 'Copy link' : 'Kopier lenke'; }
+        if (iabBanner) { iabBanner.className = 'iab-banner show'; }
 
-        // Add top padding to body so content isn't hidden behind banner
         document.body.style.paddingTop = '120px';
 
-        iabCopyBtn.addEventListener('click', function() {
-          copyToClipboard(fullUrl);
-          showToast(s.iabToast);
-        });
+        if (iabCopyBtn) {
+          iabCopyBtn.onclick = function() {
+            copyToClipboard(fullUrl);
+            showToast(isEn ? '\u2713 Link copied! Paste in Safari.' : '\u2713 Lenke kopiert! Lim inn i Safari.');
+          };
+        }
       }
 
       // --- Clipboard deep link (deferred deep linking) ---
@@ -338,24 +302,44 @@
         copyToClipboard(fullUrl);
       }
 
-      // --- Fetch event/group data from Supabase ---
-      // Page already shows default content (M logo, heading, buttons).
-      // This block enhances with real data if available.
-      var logoContainer = document.getElementById('logoContainer');
+      // --- Open button click handler ---
+      if (openBtn) {
+        openBtn.onclick = function(e) {
+          if (!appUrl) { return; }
+          e.preventDefault();
+          window.location.href = appUrl;
+
+          var redirectTimer = setTimeout(function() {
+            if (!document.hidden) {
+              window.location.href = APP_STORE;
+            }
+          }, 2500);
+
+          var onVisChange = function() {
+            if (document.hidden) {
+              clearTimeout(redirectTimer);
+              document.removeEventListener('visibilitychange', onVisChange, false);
+            }
+          };
+          document.addEventListener('visibilitychange', onVisChange, false);
+        };
+      }
+
+      // --- Fetch event/group data from Supabase (non-blocking enhancement) ---
       try {
         if (type && id && (type === 'event' || type === 'group') && typeof fetch === 'function') {
           var SUPABASE_URL = 'https://ynuvtpkdxvzlmfqbuvvn.supabase.co';
           var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InludXZ0cGtkeHZ6bG1mcWJ1dnZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIyNDYwNzQsImV4cCI6MjAyNzgyMjA3NH0.mua9EwOROb26EnU7HOTl8thxIzBJ_ox52jzVVDCYfjg';
-          var headers = { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY };
+          var fetchHeaders = { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY };
 
           var fetchUrl = type === 'event'
             ? SUPABASE_URL + '/rest/v1/event?id=eq.' + id + '&select=title,description'
             : SUPABASE_URL + '/rest/v1/group?id=eq.' + id + '&select=title,description,header_image_path';
 
           console.log('[Moments] Fetching:', fetchUrl);
-          fetch(fetchUrl, { headers: headers })
+          fetch(fetchUrl, { headers: fetchHeaders })
             .then(function(r) {
-              console.log('[Moments] Response status:', r.status);
+              console.log('[Moments] Status:', r.status);
               if (!r.ok) { throw new Error('HTTP ' + r.status); }
               return r.json();
             })
@@ -364,88 +348,60 @@
               if (!rows || !rows.length) { return; }
               var item = rows[0];
 
-              // Update title
-              if (item.title) {
+              if (item.title && heading) {
                 heading.textContent = item.title;
                 document.title = item.title + ' \u2013 Moments';
-                var ogT = document.querySelector('meta[property="og:title"]');
-                if (ogT) { ogT.content = item.title + ' \u2013 Moments'; }
               }
 
-              // Update description
-              if (item.description) {
+              if (item.description && subtitle) {
                 var desc = item.description.length > 150
-                  ? item.description.slice(0, 150) + '\u2026'
+                  ? item.description.substring(0, 150) + '\u2026'
                   : item.description;
                 subtitle.textContent = desc;
-                var ogD = document.querySelector('meta[property="og:description"]');
-                if (ogD) { ogD.content = desc; }
               }
 
-              // Resolve image
               if (type === 'group' && item.header_image_path) {
-                showPreviewImage(SUPABASE_URL, item.header_image_path);
+                loadPreviewImage(SUPABASE_URL + '/storage/v1/object/public/event_images/' + item.header_image_path);
               } else if (type === 'event') {
-                fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: headers })
+                fetch(SUPABASE_URL + '/rest/v1/event_images?event_id=eq.' + id + '&select=image_path&order=sort_order.asc&limit=1', { headers: fetchHeaders })
                   .then(function(r) { return r.json(); })
                   .then(function(imgs) {
-                    console.log('[Moments] Event images:', imgs);
+                    console.log('[Moments] Images:', imgs);
                     if (imgs && imgs.length && imgs[0] && imgs[0].image_path) {
-                      showPreviewImage(SUPABASE_URL, imgs[0].image_path);
+                      loadPreviewImage(SUPABASE_URL + '/storage/v1/object/public/event_images/' + imgs[0].image_path);
                     }
                   })
-                  .catch(function(err) { console.error('[Moments] Image fetch failed:', err); });
+                  .catch(function(err) { console.error('[Moments] Image fetch error:', err); });
               }
             })
             .catch(function(err) {
-              console.error('[Moments] Fetch failed:', err);
+              console.error('[Moments] Fetch error:', err);
             });
         }
-      } catch (e) {
-        console.error('[Moments] Script error:', e);
+      } catch (fetchErr) {
+        console.error('[Moments] Fetch block error:', fetchErr);
       }
 
-      function showPreviewImage(baseUrl, imgPath) {
+      function loadPreviewImage(src) {
         try {
           var img = document.createElement('img');
           img.className = 'preview-img';
           img.alt = '';
-          img.src = baseUrl + '/storage/v1/object/public/event_images/' + imgPath;
           img.onload = function() {
-            logoContainer.innerHTML = '';
-            logoContainer.appendChild(img);
+            if (logoContainer) {
+              logoContainer.innerHTML = '';
+              logoContainer.appendChild(img);
+            }
           };
           img.onerror = function() {
-            console.error('[Moments] Image load failed:', img.src);
+            console.error('[Moments] Image load failed:', src);
           };
+          img.src = src;
         } catch (e) {
-          console.error('[Moments] showPreviewImage error:', e);
+          console.error('[Moments] loadPreviewImage error:', e);
         }
       }
 
-      // --- Open button click handler with visibility check ---
-      openBtn.addEventListener('click', function(e) {
-        if (!appUrl) return;
-        e.preventDefault();
-        window.location.href = appUrl;
-
-        var redirectTimer = setTimeout(function() {
-          if (!document.hidden) {
-            window.location.href = APP_STORE;
-          }
-        }, 2500);
-
-        // Cancel redirect if app opened successfully
-        var onVisChange = function() {
-          if (document.hidden) {
-            clearTimeout(redirectTimer);
-            document.removeEventListener('visibilitychange', onVisChange);
-          }
-        };
-        document.addEventListener('visibilitychange', onVisChange, false);
-      });
-
-      // --- Helpers ---
       function copyToClipboard(text) {
         try {
           if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -462,22 +418,26 @@
             document.body.removeChild(ta);
           }
         } catch (e) {
-          // Clipboard not available — fail silently
+          // fail silently
         }
       }
 
       function showToast(msg) {
         var toast = document.getElementById('toast');
+        if (!toast) { return; }
         toast.textContent = msg;
-        toast.classList.remove('show');
-        // Force reflow for re-animation
+        toast.className = 'toast';
         void toast.offsetWidth;
-        toast.classList.add('show');
+        toast.className = 'toast show';
         setTimeout(function() {
-          toast.classList.remove('show');
+          toast.className = 'toast';
         }, 2500);
       }
     })();
+    } catch (e) {
+      // Page content is already visible from HTML — JS failure is non-fatal
+      if (typeof console !== 'undefined') { console.error('[Moments] Fatal JS error:', e); }
+    }
   </script>
 </body>
 </html>
