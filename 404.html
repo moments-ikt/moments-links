@@ -320,31 +320,15 @@
         copyToClipboard(fullUrl);
       }
 
-      // --- Auto custom scheme redirect (not in IAB) ---
-      if (appUrl && !isIAB) {
-        setTimeout(function() {
-          var hidden = document.hidden;
-
-          // Try opening the app via custom scheme
-          window.location.href = appUrl;
-
-          // If app doesn't open within 1.5s, redirect to App Store
-          setTimeout(function() {
-            if (!document.hidden && !hidden) {
-              window.location.href = APP_STORE;
-            }
-          }, 1500);
-        }, 300);
-      }
-
       // --- Open button click handler with visibility check ---
       openBtn.addEventListener('click', function(e) {
         if (!appUrl) return;
         e.preventDefault();
+        var hiddenBefore = document.hidden;
         window.location.href = appUrl;
 
         setTimeout(function() {
-          if (!document.hidden) {
+          if (!document.hidden && !hiddenBefore) {
             window.location.href = APP_STORE;
           }
         }, 1500);
